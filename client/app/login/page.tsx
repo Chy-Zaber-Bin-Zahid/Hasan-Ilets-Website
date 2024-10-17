@@ -6,18 +6,12 @@ import * as z from 'zod'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-
-// Define the schema for form validation
-const loginSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters long" }),
-})
+import { loginSchema } from '@/zod/login'
 
 // Infer the type from the schema
 type LoginFormValues = z.infer<typeof loginSchema>
 
 export default function Login() {
-  // Initialize the form with React Hook Form and Zod resolver
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
