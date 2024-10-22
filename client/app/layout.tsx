@@ -2,6 +2,7 @@ import ReactQueryProvider from '@/lib/ReactQueryProvider'
 import { StoreProvider } from '@/redux/StoreProvider'
 import { Metadata } from 'next'
 import "./globals.css";
+import Navbar from '@/components/Navbar';
 
 export const metadata: Metadata = {
   title: 'My App',
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body>
         <StoreProvider>
           <ReactQueryProvider>
+            <Navbar/>
             {children}
           </ReactQueryProvider>
         </StoreProvider>
