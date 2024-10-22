@@ -15,6 +15,10 @@ interface Question {
     correctAnswer: string;
 }
 
+interface FormData {
+    [key: string]: string;
+}
+
 const questions: Question[] = [
     { id: 1, type: 'truefalse', question: "People had expected Andy Murray to become the world's top tennis player for at least five years before 2016.", correctAnswer: "FALSE" },
     { id: 2, type: 'truefalse', question: "The change that Andy Murray made to his rackets attracted a lot of attention.", correctAnswer: "TRUE" },
@@ -28,12 +32,12 @@ const questions: Question[] = [
 ]
 
 export default function ReadingTest() {
-    const { control, handleSubmit, formState: { errors }, trigger } = useForm()
+    const { control, handleSubmit, formState: { errors }, trigger } = useForm<FormData>()
     const [results, setResults] = useState<{ [key: number]: boolean }>({})
     const [score, setScore] = useState<number | null>(null)
     const [showAnswers, setShowAnswers] = useState(false)
 
-    const onSubmit = (data: any) => {
+    const onSubmit = (data: FormData) => {
         const newResults = questions.reduce((acc, question) => {
             acc[question.id] = data[`question${question.id}`].toLowerCase() === question.correctAnswer.toLowerCase()
             return acc
