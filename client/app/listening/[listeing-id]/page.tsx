@@ -23,6 +23,10 @@ interface Part {
   audioPath: string;
 }
 
+interface FormData {
+  [key: string]: string;
+}
+
 const questions: { part1: Part; part2: Part } = {
   part1: {
     questions: [
@@ -48,7 +52,7 @@ interface AudioPlayerProps {
   onPlay: () => void;
 }
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, part, onPlay }) => {
+const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, onPlay }) => {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -88,13 +92,12 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, part, onPlay }) => {
 }
 
 export default function ListeningTest() {
-  const { control, handleSubmit, formState: { errors } } = useForm()
+  const { control, handleSubmit, formState: { errors } } = useForm<FormData>()
   const [results, setResults] = useState<{ [key: number]: boolean }>({})
   const [score, setScore] = useState<number | null>(null)
   const [showAnswers, setShowAnswers] = useState(false)
-  const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null)
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: FormData) => {
     const allQuestions = [...questions.part1.questions, ...questions.part2.questions]
     const newResults = allQuestions.reduce((acc, question) => {
       acc[question.id] = data[`question${question.id}`].toLowerCase() === question.correctAnswer.toLowerCase()
@@ -112,18 +115,13 @@ export default function ListeningTest() {
     console.log(allAudios);
   
     allAudios.forEach(audio => {
-      // Extract only the pathname to compare (ignores protocol, domain)
       const audioPath = new URL(audio.src).pathname;
   
-      // Pause other audios except the one currently being played
       if (audioPath !== currentAudioPath) {
         audio.pause();
       }
     });
-  
-    setCurrentlyPlaying(part); // Update currently playing state
   };
-  
 
   const renderQuestions = (part: Part) => {
     return part.questions.map((question) => (
@@ -167,9 +165,13 @@ export default function ListeningTest() {
             {results[question.id] ? "Correct" : "Incorrect"}
           </p>
         )}
-        {showAnswers && (
+        <div
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            showAnswers ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
+          }`}
+        >
           <p className="text-blue-600 mt-1">Correct Answer: {question.correctAnswer}</p>
-        )}
+        </div>
       </div>
     ))
   }
