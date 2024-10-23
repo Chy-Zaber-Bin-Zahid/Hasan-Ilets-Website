@@ -8,9 +8,9 @@ export default function ContactPage() {
                 <h1 className="text-4xl font-bold text-center mb-2">Contact With Me</h1>
                 <p className="text-center text-gray-600 mb-8">Get in touch with me</p>
                 <div className="flex flex-col md:flex-row items-center justify-center gap-8 bg-white p-6 rounded-lg shadow-lg">
-                    <div className="w-full md:w-1/2 space-y-6">
+                    <div className="w-full md:w-1/2 gap-1 flex justify-center items-center flex-col">
                         <h2 className="text-2xl font-semibold mb-4">Contact Information</h2>
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             <div className="flex items-center space-x-3">
                                 <Mail className="text-gray-600" />
                                 <span>amihasan471@gmail.com</span>

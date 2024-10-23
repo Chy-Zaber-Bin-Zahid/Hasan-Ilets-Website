@@ -110,13 +110,13 @@ export default function ListeningTest() {
 
   const handlePlay = (part: string) => {
     const allAudios = document.querySelectorAll('audio') as NodeListOf<HTMLAudioElement>;
-  
+
     const currentAudioPath = questions[part as keyof typeof questions].audioPath;
     console.log(allAudios);
-  
+
     allAudios.forEach(audio => {
       const audioPath = new URL(audio.src).pathname;
-  
+
       if (audioPath !== currentAudioPath) {
         audio.pause();
       }
@@ -166,11 +166,10 @@ export default function ListeningTest() {
           </p>
         )}
         <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${
-            showAnswers ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
-          }`}
+          className={`overflow-hidden transition-all duration-500 ease-in-out ${showAnswers ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
+            }`}
         >
-          <p className="text-blue-600 mt-1">Correct Answer: {question.correctAnswer}</p>
+          <p className="text-blue-600 mt-1">Answer: {question.correctAnswer}</p>
         </div>
       </div>
     ))
@@ -224,15 +223,17 @@ export default function ListeningTest() {
         </div>
       )}
 
-      <Button onClick={handleSubmit(onSubmit)} className="w-full mb-4">Check Answers</Button>
+      <div className="flex justify-between items-center gap-6">
+        <Button onClick={handleSubmit(onSubmit)} className="w-full">Check Answers</Button>
 
-      <Button 
-        onClick={() => setShowAnswers(!showAnswers)} 
-        variant="outline"
-        className="w-full"
-      >
-        {showAnswers ? "Hide Answers" : "Show Answers"}
-      </Button>
+        <Button
+          onClick={() => setShowAnswers(!showAnswers)}
+          variant="outline"
+          className="w-full"
+        >
+          {showAnswers ? "Hide Answers" : "Show Answers"}
+        </Button>
+      </div>
     </div>
   )
 }

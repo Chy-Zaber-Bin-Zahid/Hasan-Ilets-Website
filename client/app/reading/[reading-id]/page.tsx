@@ -110,9 +110,12 @@ export default function ReadingTest() {
                                         {results[question.id] ? "Correct" : "Incorrect"}
                                     </p>
                                 )}
-                                {showAnswers && (
+                                <div
+                                    className={`overflow-hidden transition-all duration-500 ease-in-out ${showAnswers ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
+                                        }`}
+                                >
                                     <p className="text-blue-600 mt-1">Answer: {question.correctAnswer}</p>
-                                )}
+                                </div>
                             </div>
                         ))}
                     </CardContent>
@@ -148,9 +151,12 @@ export default function ReadingTest() {
                                         {results[question.id] ? "Correct" : "Incorrect"}
                                     </p>
                                 )}
-                                {showAnswers && (
+                                <div
+                                    className={`overflow-hidden transition-all duration-500 ease-in-out ${showAnswers ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
+                                        }`}
+                                >
                                     <p className="text-blue-600 mt-1">Answer: {question.correctAnswer}</p>
-                                )}
+                                </div>
                             </div>
                         ))}
                     </CardContent>
@@ -162,16 +168,18 @@ export default function ReadingTest() {
                     </div>
                 )}
 
-                <Button type="submit" className="w-full">Check Answers</Button>
+                <div className="flex justify-between items-center gap-6">
+                    <Button type="submit" className="w-full">Check Answers</Button>
 
-                <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full mt-4"
-                    onClick={() => setShowAnswers(!showAnswers)}
-                >
-                    {showAnswers ? "Hide Answers" : "Show Answers"}
-                </Button>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => setShowAnswers(!showAnswers)}
+                    >
+                        {showAnswers ? "Hide Answers" : "Show Answers"}
+                    </Button>
+                </div>
             </form>
         </div>
     )
