@@ -1,5 +1,7 @@
 "use client"
 
+import React, { useEffect, useRef, useState } from 'react'
+import { useForm, Controller } from 'react-hook-form'
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -7,8 +9,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { AlertCircle } from 'lucide-react'
-import React, { useEffect, useRef, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
 
 interface Question {
   id: number;
@@ -30,9 +30,9 @@ interface FormData {
 const questions: { part1: Part; part2: Part } = {
   part1: {
     questions: [
-      { id: 1, type: 'fillin', question: "Postcode:", correctAnswer: "SW1" },
-      { id: 2, type: 'fillin', question: "Date of bus journey:", correctAnswer: "15/07/2023" },
-      { id: 3, type: 'fillin', question: "Reason for trip: shopping and visit to the", correctAnswer: "museum" },
+      { id: 1, type: 'fillin', question: "Postcode: ________", correctAnswer: "SW1" },
+      { id: 2, type: 'fillin', question: "Date of bus journey: ________", correctAnswer: "15/07/2023" },
+      { id: 3, type: 'fillin', question: "Reason for trip: shopping and visit to the ________", correctAnswer: "museum" },
       { id: 4, type: 'fillin', question: "Travelled by bus because cost of ________ too high", correctAnswer: "taxi" },
       { id: 5, type: 'fillin', question: "Got on bus at ________ Street", correctAnswer: "Oxford" },
     ],
@@ -92,7 +92,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, onPlay }) => {
 }
 
 export default function ListeningTest() {
-  const { control, handleSubmit, formState: { errors } } = useForm<FormData>()
+  const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
+    mode: 'onSubmit'
+  })
   const [results, setResults] = useState<{ [key: number]: boolean }>({})
   const [score, setScore] = useState<number | null>(null)
   const [showAnswers, setShowAnswers] = useState(false)
@@ -123,39 +125,56 @@ export default function ListeningTest() {
     });
   };
 
+  const renderInlineInput = (question: Question) => {
+    const parts = question.question.split('________')
+    return (
+      <p className="mb-2">
+        {parts[0]}
+        <Controller
+          name={`question${question.id}`}
+          control={control}
+          rules={{ required: "This field is required" }}
+          render={({ field }) => (
+            <Input
+              {...field}
+              className="px-1 inline-block py-0 h-6 w-32 mx-1 border-b border-t-0 border-l-0 border-r-0 rounded-none focus:outline-none"
+              placeholder="Answer"
+            />
+          )}
+        />
+        {parts[1]}
+      </p>
+    )
+  }
+
   const renderQuestions = (part: Part) => {
     return part.questions.map((question) => (
       <div key={question.id} className="mb-4">
-        <Label htmlFor={`question${question.id}`} className="block mb-2">{question.question}</Label>
         {question.type === 'fillin' ? (
-          <Controller
-            name={`question${question.id}`}
-            control={control}
-            rules={{ required: "This field is required" }}
-            render={({ field }) => (
-              <Input {...field} id={`question${question.id}`} className="w-full" />
-            )}
-          />
+          renderInlineInput(question)
         ) : (
-          <Controller
-            name={`question${question.id}`}
-            control={control}
-            rules={{ required: "This field is required" }}
-            render={({ field }) => (
-              <RadioGroup
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                className="flex flex-col space-y-1"
-              >
-                {question.options?.map((option, index) => (
-                  <div key={index} className="flex items-center space-x-3">
-                    <RadioGroupItem value={option.split('.')[0]} id={`question${question.id}-${index}`} />
-                    <Label htmlFor={`question${question.id}-${index}`}>{option}</Label>
-                  </div>
-                ))}
-              </RadioGroup>
-            )}
-          />
+          <>
+            <Label htmlFor={`question${question.id}`} className="block mb-2">{question.question}</Label>
+            <Controller
+              name={`question${question.id}`}
+              control={control}
+              rules={{ required: "This field is required" }}
+              render={({ field }) => (
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  {question.options?.map((option, index) => (
+                    <div key={index} className="flex items-center space-x-3">
+                      <RadioGroupItem value={option.split('.')[0]} id={`question${question.id}-${index}`} />
+                      <Label htmlFor={`question${question.id}-${index}`}>{option}</Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              )}
+            />
+          </>
         )}
         {errors[`question${question.id}`] && (
           <p className="text-red-500 text-sm mt-1">{errors[`question${question.id}`]?.message as string}</p>

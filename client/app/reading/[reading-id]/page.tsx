@@ -32,7 +32,9 @@ const questions: Question[] = [
 ]
 
 export default function ReadingTest() {
-    const { control, handleSubmit, formState: { errors }, trigger } = useForm<FormData>()
+    const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
+        mode: 'onSubmit'
+    })
     const [results, setResults] = useState<{ [key: number]: boolean }>({})
     const [score, setScore] = useState<number | null>(null)
     const [showAnswers, setShowAnswers] = useState(false)
@@ -45,6 +47,28 @@ export default function ReadingTest() {
         setResults(newResults)
         const newScore = Object.values(newResults).filter(Boolean).length
         setScore(newScore)
+    }
+
+    const renderInlineInput = (question: Question, index: number) => {
+        const parts = question.question.split('________')
+        return (
+            <p className="">
+                {index + 1}. {parts[0]}
+                <Controller
+                    name={`question${question.id}`}
+                    control={control}
+                    rules={{ required: "This field is required" }}
+                    render={({ field }) => (
+                        <Input
+                            {...field}
+                            className="px-1 inline-block py-0 h-6 w-32 mx-1 border-b border-t-0 border-l-0 border-r-0 rounded-none focus:outline-none"
+                            placeholder="Answer"
+                        />
+                    )}
+                />
+                {parts[1]}
+            </p>
+        )
     }
 
     return (
@@ -85,10 +109,7 @@ export default function ReadingTest() {
                                     rules={{ required: "This field is required" }}
                                     render={({ field }) => (
                                         <Select
-                                            onValueChange={(value) => {
-                                                field.onChange(value)
-                                                trigger(`question${question.id}`)
-                                            }}
+                                            onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
                                             <SelectTrigger id={`question${question.id}`}>
@@ -127,22 +148,9 @@ export default function ReadingTest() {
                     </CardHeader>
                     <CardContent>
                         <p className="mb-4">Complete the notes below. Choose ONE WORD ONLY from the passage for each answer.</p>
-                        {questions.filter(q => q.type === 'fillin').map((question) => (
+                        {questions.filter(q => q.type === 'fillin').map((question, index) => (
                             <div key={question.id} className="mb-4">
-                                <Label htmlFor={`question${question.id}`} className="mb-2">{question.question}</Label>
-                                <Controller
-                                    name={`question${question.id}`}
-                                    control={control}
-                                    rules={{ required: "This field is required" }}
-                                    render={({ field }) => (
-                                        <Input
-                                            {...field}
-                                            id={`question${question.id}`}
-                                            placeholder="Enter your answer"
-                                            onBlur={() => trigger(`question${question.id}`)}
-                                        />
-                                    )}
-                                />
+                                {renderInlineInput(question, index)}
                                 {errors[`question${question.id}`] && (
                                     <p className="text-red-500 text-sm mt-1">{errors[`question${question.id}`]?.message as string}</p>
                                 )}
